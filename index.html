@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Minha Rotina de Exercícios</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f4f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333;
+    }
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      width: 300px;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .card.done {
+      background: #e0ffe0;
+    }
+    .card:hover {
+      transform: scale(1.02);
+    }
+    .card h2 {
+      margin-top: 0;
+    }
+    .exercicio {
+      margin-bottom: 10px;
+    }
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .checkbox-container {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+    }
+    .global-controls {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .btn {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <h1>Minha Rotina de Exercícios (Próximos 7 Dias)</h1>
+
+  <div class="global-controls">
+    <button class="btn" onclick="expandirTudo()">Mostrar Todos os Exercícios</button>
+    <button class="btn" onclick="colapsarTudo()">Ocultar Todos</button>
+  </div>
+
+  <div class="container" id="diasContainer"></div>
+
+  <script>
+    const dias = [
+      { data: "15/06", exercicios: [
+        { nome: "Agachamento com almofada", instrucao: "Fique em pé, segure uma almofada à frente e agache devagar. Faça 3 séries de 10 repetições." },
+        { nome: "Flexão na parede", instrucao: "Encoste as mãos na parede, incline-se e flexione os braços. Faça 3 séries de 10 repetições." }
+      ]},
+      { data: "16/06", exercicios: [
+        { nome: "Elevação de panturrilha", instrucao: "Em pé, suba na ponta dos pés e desça devagar. Faça 3 séries de 12." },
+        { nome: "Rotação de punho", instrucao: "Com o braço relaxado, gire o punho em círculos 10x para cada lado." }
+      ]},
+      { data: "17/06", exercicios: [
+        { nome: "Agachamento simples", instrucao: "Sem peso, mãos cruzadas sobre o peito. Faça 3 séries de 12." },
+        { nome: "Extensão de punhos com toalha", instrucao: "Use uma toalha enrolada e empurre com os punhos para cima. 2 séries de 15 repetições." }
+      ]},
+      { data: "18/06", exercicios: [
+        { nome: "Elevação de joelhos sentado", instrucao: "Sente-se e eleve um joelho de cada vez. 3 séries de 10 por perna." },
+        { nome: "Alongamento de punho na parede", instrucao: "Encoste a palma na parede com o braço estendido e incline-se levemente. 30 segundos por lado." }
+      ]},
+      { data: "19/06", exercicios: [
+        { nome: "Agachamento com apoio de cadeira", instrucao: "Use uma cadeira como apoio atrás. Toque levemente com o quadril e suba. 3 séries de 10." },
+        { nome: "Rotação de tornozelos", instrucao: "Sente-se e gire cada tornozelo 10x para cada lado." }
+      ]},
+      { data: "20/06", exercicios: [
+        { nome: "Flexão de braço em parede (mais inclinada)", instrucao: "Afaste mais os pés da parede para dificultar. 3 séries de 10." },
+        { nome: "Alongamento de punho com puxada", instrucao: "Com uma mão, puxe levemente os dedos da outra para trás. 20 segundos por lado." }
+      ]},
+      { data: "21/06", exercicios: [
+        { nome: "Agachamento com pausa", instrucao: "Desça e mantenha a posição por 3 segundos. 3 séries de 8." },
+        { nome: "Elevação de braços lateral sem peso", instrucao: "Levante os braços lateralmente até a altura dos ombros. 3 séries de 12." }
+      ]}
+    ];
+
+    const container = document.getElementById("diasContainer");
+
+    dias.forEach((dia, index) => {
+      const card = document.createElement("div");
+      card.className = "card";
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "checkbox-container";
+      checkbox.title = "Marcar como feito";
+      checkbox.checked = localStorage.getItem(`feito-${index}`) === "true";
+      checkbox.onchange = () => {
+        if (checkbox.checked) {
+          card.classList.add("done");
+        } else {
+          card.classList.remove("done");
+        }
+        localStorage.setItem(`feito-${index}`, checkbox.checked);
+      };
+
+      if (checkbox.checked) card.classList.add("done");
+
+      card.innerHTML = `<h2>Dia ${index + 1} - ${dia.data}</h2>`;
+
+      dia.exercicios.forEach(ex => {
+        const details = document.createElement("details");
+        details.className = "exercicio";
+        details.innerHTML = `<summary>${ex.nome}</summary><p>${ex.instrucao}</p>`;
+        card.appendChild(details);
+      });
+
+      card.appendChild(checkbox);
+      container.appendChild(card);
+    });
+
+    function expandirTudo() {
+      document.querySelectorAll("details").forEach(el => el.open = true);
+    }
+    function colapsarTudo() {
+      document.querySelectorAll("details").forEach(el => el.open = false);
+    }
+  </script>
+</body>
+</html>
